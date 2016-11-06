@@ -1,0 +1,72 @@
+* how to make a website from markdown files?
+** Structure
+- .md files can all be in one dir
+-- inside it that can be sub dirs
+-- md files are alpabethically ordered. E.g. using dates 2016_10_01-bar.md, 2016_11_04-foo.md
+with follow the convention
+- md files contain YALM metadata:
+
+src_yalm{
+---
+title:""
+date:""     #format: yyyy-mm-dd
+author:""
+---
+}
+
+    
+- all markdownfiles are converted to html
+- html files converted are listed in the index of the website
+
+- use of git hooks "Server-Side Hooks: These hooks are executed on servers that are used to receive pushes.
+ Generally, that would be the main git repo for a project. Again, Chacon divided these into categories: 
+Pre-receive and post-receive: These are executed on the server receiving a push"
+
+
+** Operation
+- ~makefile~ is responsible for conversion and moving files to appropriate location
+-- convert md to html
+--
+
+where does the md->html conversion happen? 
+- Through python ( html content stored as variable )
+- Throught makefile? (can store to file) ~Can store to variable?~
+
+- ~jinja~ creates menu sections in html menu based on subdirs md/publications/ md/events/ md/about
+-- template creates pages with context information: page title links to other pages
+-- the html content is injected on to the template
+
+*** Git hook
+- the user only pushes markdown files
+- upon receiving it the server repository, should have a hook that:
+-- runs the makefile to generate the html
+
+git-receive-pack (on the remote repo)
+This is run only once after all of the refs have been pushed. 
+It is similar to the post-receive hook in that regard, but does not receive the old or new values. It is used mostly to implement notifications for the pushed refs.
+
+~Experiment~
+- create remote git rep
+- create local git rep
+- do a few pushes
+
+- build a hook that runs a shell script that saves dates to files
+-- in local repository
+$ cd .git/hooks/
+$ ls
+applypatch-msg.sample  prepare-commit-msg.sample
+commit-msg.sample      pre-push.sample
+post-update.sample     pre-rebase.sample
+pre-applypatch.sample  update.sample
+pre-commit.sample
+
+$ emacs .git/hooks/post-receive
+...add some shell script that creates files
+
+Following strategy: http://mattbanks.me/wordpress-deployments-with-git/
+- bare repo
+- with seperate GIT_WORK_TREE
+- checkout 
+GIT_WORK_TREE=/home/andre/git_hooks_nonbare git checkout -f
+in ~post-receive~ file
+
