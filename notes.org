@@ -36,7 +36,7 @@ where does the md->html conversion happen?
 -- template creates pages with context information: page title links to other pages
 -- the html content is injected on to the template
 
-*** Git hook
+*** Git hooks
 - the user only pushes markdown files
 - upon receiving it the server repository, should have a hook that:
 -- runs the makefile to generate the html
@@ -70,3 +70,8 @@ Following strategy: http://mattbanks.me/wordpress-deployments-with-git/
 GIT_WORK_TREE=/home/andre/git_hooks_nonbare git checkout -f
 in ~post-receive~ file
 
+* Working prototype
+- correct menu links
+- inherit parent template w/ sections: menu, content
+- pandoc on server converts on ~post-receive~
+- parsing yalm metadata and inserting to template
