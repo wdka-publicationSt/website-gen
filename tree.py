@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import os,  shlex, subprocess
-from jinja2 import Template
+from jinja2 import Template, Environment, FileSystemLoader
 from pprint import pprint
+
 
 def pandoc2html(md_file):
     # convert md files to html
@@ -22,21 +23,17 @@ def parse_filetree(path):
     #                                 'title': None}    
     filetree = {}
     for item in os.listdir(path): #os.walk(path)
-        if os.path.isdir(item) and 'git' not in item:
+        if os.path.isdir(item) and 'templates' not in item and 'git' not in item:
             item_dir = item
             item_dir_fullpath = os.path.abspath(item_dir)
             filetree[item_dir] = {} # directory content
             print 'dir >>>>>>', item_dir
             for item_file in os.listdir(item_dir):
-                keys = ['file_path','title','author', 'date', 'content' ] # file info
-                filetree[item_dir][item_file]={ key:None for key in keys }
-                filetree[item_dir][item_file]['file_path'] = (item_dir+'/'+item_file).replace('.md','.html')
-
-                # content conversion: md -> html
-                md_file = item_dir_fullpath+'/'+item_file
-                print 'md file >>', md_file
-                html_content = pandoc2html(md_file)
-                filetree[item_dir][item_file]['content'] = html_content
+                if '.html' not in item_file:
+                    keys = ['file_path','title','author', 'date' ] # file info
+                    filetree[item_dir][item_file]={ key:None for key in keys }
+                    filetree[item_dir][item_file]['file_path'] = (item_dir+'/'+item_file)
+                    filetree[item_dir][item_file]['title'] = (item_file.replace('.md','')) # TODO: get title from YALM metadata
                 
     return filetree
 
@@ -47,23 +44,46 @@ def generate_menu(menu_dict):
     {% for item_dir, item_files in menu_dict.iteritems() %}
     <li>{{ item_dir }}</li>
     <ul>
-
     {% for item_title in item_files %} 
-       <li><a href="{{item_dir}}/{{ item_title }}"> {{ item_title }} </a></li>
+       <li><a href="{{item_dir}}/{{ item_title.replace('.md','.html') }}"> {{ item_title.replace('.md','.html') }} </a></li>
     {% endfor %}
-
     </ul>
     {% endfor %}
     </ul>''')
     menu_rendered = menu.render(menu_dict=menu_dict)
     return menu_rendered
 
+def generate_html_pages(site_dict):
+    env = Environment(loader=FileSystemLoader('templates'))
+    template = env.get_template('template_base.html')
+    
+    site_menu = generate_menu(site_dict)
+
+    for item_dir, item_files in site_dict.iteritems():
+        item_dir_fullpath = os.path.abspath(item_dir)
+        for item_file in item_files:
+
+            # content conversion: md -> html
+            md_file = site_dict[item_dir][item_file]['file_path']
+
+            md_title = site_dict[item_dir][item_file]['title']
+
+            html_content = pandoc2html(md_file)
+            
+            # assemble different parts to template_base.html            
+            output_from_parsed_template = template.render(menu=site_menu, content=html_content, title=md_title)
+            html_file=md_file.replace('.md','.html') # TODO: use a method more robust than replace
+            html_file_open = open(html_file, 'w')
+            html_file_open.write(output_from_parsed_template)
+            html_file_open.close()
+
+
+            
 path = '.'
 site_dict = parse_filetree(path)
 pprint(site_dict)
-menu = generate_menu(site_dict)
-print
-print menu
+generate_html_pages( site_dict )
+
 
 #     # key top level <li>
 # # <ul><li>dir</li>

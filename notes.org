@@ -71,7 +71,10 @@ GIT_WORK_TREE=/home/andre/git_hooks_nonbare git checkout -f
 in ~post-receive~ file
 
 * Working prototype
-- correct menu links
-- inherit parent template w/ sections: menu, content
-- pandoc on server converts on ~post-receive~
-- parsing yalm metadata and inserting to template
+** TODO LOCAL
++ correct menu links 
++ get metada from files
+
+** TODO SERVER
++ pandoc on server converts on ~post-receive~
++ parsing yalm metadata and inserting to template
