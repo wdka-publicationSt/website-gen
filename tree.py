@@ -22,34 +22,51 @@ def parse_filetree(path):
     #                                 'file_path': 'publications/baaaaar.md',
     #                                 'title': None}    
     filetree = {}
-    for item in os.listdir(path): #os.walk(path)
-        if os.path.isdir(item) and 'templates' not in item and 'git' not in item:
-            item_dir = item
-            item_dir_fullpath = os.path.abspath(item_dir)
-            filetree[item_dir] = {} # directory content
-            print 'dir >>>>>>', item_dir
-            for item_file in os.listdir(item_dir):
-                if '.html' not in item_file:
-                    keys = ['file_path','title','author', 'date' ] # file info
-                    filetree[item_dir][item_file]={ key:None for key in keys }
-                    filetree[item_dir][item_file]['file_path'] = (item_dir+'/'+item_file)
-                    filetree[item_dir][item_file]['title'] = (item_file.replace('.md','')) # TODO: get title from YALM metadata
-                
+    for (dirpath, dirs, files) in os.walk(path):
+        for f in files:
+            filepath =  (os.path.join(dirpath, f)).replace( path, '.')
+            item_dir_fullpath = os.path.abspath(filepath)
+            filetree[filepath] = {} # directory content
+            if '.html' not in filepath:
+                dirpath = dirpath.replace('./pages','.')
+                print dirpath, filepath
+                keys = ['file_path','title','author', 'date' ] # file info
+                filetree[filepath]={}
+                filetree[filepath]={ key:None for key in keys }
+                filetree[filepath]['file_path'] = (filepath)
+                filetree[filepath]['title'] = ( os.path.split(filepath)[-1]).replace('.md','')
+                # TODO: get title from YALM metadata
+    pprint(filetree)
     return filetree
 
 
 
-def generate_menu(menu_dict):
-    menu=Template('''<ul>
+def generate_menu(menu_dict): # if content or index page
+
+    
+    menu=Template('''
+    <ul>
     {% for item_dir, item_files in menu_dict.iteritems() %}
     <li>{{ item_dir }}</li>
     <ul>
+
     {% for item_title in item_files %} 
-       <li><a href="{{item_dir}}/{{ item_title.replace('.md','.html') }}"> {{ item_title.replace('.md','.html') }} </a></li>
+
+    {% if  item_dir  %}
+       {% set path='..' %}
+        >>>>> {{ item_dir  }}
+    {% else %}
+       {% set path='.' %}
+       >> {{item_dir}}
+    {% endif %}
+
+    <li><a href="{{ path }}/{{item_dir}}/{{ item_title|replace('.md','.html') }}"> {{ item_title|replace('.md','') }} </a></li>  {# ../ for content pages ./ for index #}
     {% endfor %}
+
     </ul>
     {% endfor %}
     </ul>''')
+
     menu_rendered = menu.render(menu_dict=menu_dict)
     return menu_rendered
 
@@ -58,7 +75,8 @@ def generate_html_pages(site_dict):
     template = env.get_template('template_base.html')
     
     site_menu = generate_menu(site_dict)
-
+    print site_menu
+    
     for item_dir, item_files in site_dict.iteritems():
         item_dir_fullpath = os.path.abspath(item_dir)
         for item_file in item_files:
@@ -79,10 +97,10 @@ def generate_html_pages(site_dict):
 
 
             
-path = '.'
+path = './pages'
 site_dict = parse_filetree(path)
-pprint(site_dict)
-generate_html_pages( site_dict )
+#pprint(site_dict)
+#generate_html_pages( site_dict )
 
 
 #     # key top level <li>
