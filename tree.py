@@ -23,51 +23,70 @@ def parse_filetree(path):
     #                                 'title': None}    
     filetree = {}
     for (dirpath, dirs, files) in os.walk(path):
+        
         for f in files:
-            filepath =  (os.path.join(dirpath, f)).replace( path, '.')
-            item_dir_fullpath = os.path.abspath(filepath)
-            filetree[filepath] = {} # directory content
+            filepath =  (os.path.join(dirpath, f))#.replace( path, '.')
             if '.html' not in filepath:
-                dirpath = dirpath.replace('./pages','.')
+                item_dir_fullpath = os.path.abspath(filepath)
+                filetree[filepath] = {} # directory content
+                dirpath = dirpath#.replace('./pages','.')
                 print dirpath, filepath
                 keys = ['file_path','title','author', 'date' ] # file info
                 filetree[filepath]={}
                 filetree[filepath]={ key:None for key in keys }
-                filetree[filepath]['file_path'] = (filepath)
+                filetree[filepath]['file_path'] = (filepath.replace('./pages/',''))
                 filetree[filepath]['title'] = ( os.path.split(filepath)[-1]).replace('.md','')
                 # TODO: get title from YALM metadata
-    pprint(filetree)
     return filetree
 
 
 
 def generate_menu(menu_dict): # if content or index page
 
+    # list of dir :
+    dirs_all = (list(set([ os.path.split(os.path.split(key)[0])[-1] for key in menu_dict.keys()])))
+    dirs_all.remove(path.replace('./','')) # ensure pages/ parent dir is removed
+
+    print dirs_all
+    
+    for entry in  menu_dict.keys():#in dirs_all:
+        print 'file:', entry
+    # ask which key has the following folder
+    ## what about index.html. it has no folder. Make it an exception
+    
+    # item_files in menu_dict.iteritems()
+
+    # 
+    # loop through dict for creating child li
+       # make sure child li is inside parent dir
     
     menu=Template('''
-    <ul>
-    {% for item_dir, item_files in menu_dict.iteritems() %}
-    <li>{{ item_dir }}</li>
-    <ul>
+    <ul class="menu_sections">
+   {% for item_dir in dirs %} {# loop through dirs_all to create menu sections=li #}
+    <li class="menu_sections">{{ item_dir|capitalize }}</li>
 
-    {% for item_title in item_files %} 
+        <ul class="menu_items">
+        {% for key, value in menu_dict.items() %}
 
-    {% if  item_dir  %}
-       {% set path='..' %}
-        >>>>> {{ item_dir  }}
-    {% else %}
-       {% set path='.' %}
-       >> {{item_dir}}
-    {% endif %}
+         {% if item_dir in value.file_path  %} {# if filePth is child of item_dir #}
 
-    <li><a href="{{ path }}/{{item_dir}}/{{ item_title|replace('.md','.html') }}"> {{ item_title|replace('.md','') }} </a></li>  {# ../ for content pages ./ for index #}
-    {% endfor %}
+            <li class="menu_items">
+    {# if index: path=./; if not path=../#}
 
-    </ul>
+    <a href="../{{value.file_path|replace('.md','.html')}}">
+    {{value.title|capitalize}}  {# value.date #}
+    </a>
+</li>
+
+         {% endif %}
+
+      {% endfor %}
+      </ul>
+
     {% endfor %}
     </ul>''')
 
-    menu_rendered = menu.render(menu_dict=menu_dict)
+    menu_rendered = menu.render(dirs=dirs_all, menu_dict=menu_dict)
     return menu_rendered
 
 def generate_html_pages(site_dict):
@@ -77,30 +96,25 @@ def generate_html_pages(site_dict):
     site_menu = generate_menu(site_dict)
     print site_menu
     
-    for item_dir, item_files in site_dict.iteritems():
-        item_dir_fullpath = os.path.abspath(item_dir)
-        for item_file in item_files:
-
-            # content conversion: md -> html
-            md_file = site_dict[item_dir][item_file]['file_path']
-
-            md_title = site_dict[item_dir][item_file]['title']
-
-            html_content = pandoc2html(md_file)
-            
-            # assemble different parts to template_base.html            
-            output_from_parsed_template = template.render(menu=site_menu, content=html_content, title=md_title)
-            html_file=md_file.replace('.md','.html') # TODO: use a method more robust than replace
-            html_file_open = open(html_file, 'w')
-            html_file_open.write(output_from_parsed_template)
-            html_file_open.close()
+    for file_path, file_metadata  in site_dict.iteritems():
+        item_dir_fullpath = os.path.abspath(file_path)
+        md_file = file_path
+        print 'md_file', md_file
+        md_title = file_metadata['title']
+        html_content = pandoc2html(md_file)
+        # assemble different parts to template_base.html            
+        output_from_parsed_template = template.render(menu=site_menu, content=html_content, title=md_title)
+        html_file=md_file.replace('.md','.html') # TODO: use a method more robust than replace
+        html_file_open = open(html_file, 'w')
+        html_file_open.write(output_from_parsed_template)
+        html_file_open.close()
 
 
             
 path = './pages'
 site_dict = parse_filetree(path)
-#pprint(site_dict)
-#generate_html_pages( site_dict )
+pprint(site_dict)
+generate_html_pages( site_dict )
 
 
 #     # key top level <li>
