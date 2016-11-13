@@ -46,21 +46,6 @@ git-receive-pack (on the remote repo)
 This is run only once after all of the refs have been pushed. 
 It is similar to the post-receive hook in that regard, but does not receive the old or new values. It is used mostly to implement notifications for the pushed refs.
 
-~Experiment~
-- create remote git rep
-- create local git rep
-- do a few pushes
-
-- build a hook that runs a shell script that saves dates to files
--- in local repository
-$ cd .git/hooks/
-$ ls
-applypatch-msg.sample  prepare-commit-msg.sample
-commit-msg.sample      pre-push.sample
-post-update.sample     pre-rebase.sample
-pre-applypatch.sample  update.sample
-pre-commit.sample
-
 $ emacs .git/hooks/post-receive
 ...add some shell script that creates files
 
