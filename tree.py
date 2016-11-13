@@ -45,8 +45,7 @@ def generate_menu(menu_dict): # if content or index page
 
     # list of dir :
     dirs_all = (list(set([ os.path.split(os.path.split(key)[0])[-1] for key in menu_dict.keys()])))
-    dirs_all.remove(path.replace('./','')) # ensure pages/ parent dir is removed
-
+    #dirs_all.remove(path.replace('./','')) # ensure pages/ parent dir is removed
     print dirs_all
     
     for entry in  menu_dict.keys():#in dirs_all:
@@ -63,6 +62,7 @@ def generate_menu(menu_dict): # if content or index page
     menu=Template('''
     <ul class="menu_sections">
    {% for item_dir in dirs %} {# loop through dirs_all to create menu sections=li #}
+
     <li class="menu_sections">{{ item_dir|capitalize }}</li>
 
         <ul class="menu_items">
@@ -75,13 +75,13 @@ def generate_menu(menu_dict): # if content or index page
 
     <a href="../{{value.file_path|replace('.md','.html')}}">
     {{value.title|capitalize}}  {# value.date #}
-    </a>
-</li>
+    </a></li>
 
          {% endif %}
 
       {% endfor %}
       </ul>
+
 
     {% endfor %}
     </ul>''')
