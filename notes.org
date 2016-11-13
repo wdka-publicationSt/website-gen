@@ -36,7 +36,8 @@ where does the md->html conversion happen?
 -- template creates pages with context information: page title links to other pages
 -- the html content is injected on to the template
 
-*** Git hooks
+
+** Git hooks
 - the user only pushes markdown files
 - upon receiving it the server repository, should have a hook that:
 -- runs the makefile to generate the html
@@ -70,11 +71,29 @@ Following strategy: http://mattbanks.me/wordpress-deployments-with-git/
 GIT_WORK_TREE=/home/andre/git_hooks_nonbare git checkout -f
 in ~post-receive~ file
 
+
+** YAML
+- pandoc seems to get the variables and use them in standalone conversion (with templates)
+http://stackoverflow.com/questions/26395374/what-can-i-control-with-yaml-header-options-in-pandoc
+-- should conversions to site be standalond(with custom template)?
+-- to which  the menu is inserted
+
+
+
 * Working prototype
 ** TODO LOCAL
-+ correct menu links 
 + get metada from files
++ hide non-content dirs
 
 ** TODO SERVER
 + pandoc on server converts on ~post-receive~
 + parsing yalm metadata and inserting to template
+
+The user only sees markdown files.
+Perhaps scripts can be inside ./something  dir
+
+When the files are received in the server is when the conversion happens
+
+* References
+- Push: http://push.cwcon.org/about/  aiming to do the same
+- 
