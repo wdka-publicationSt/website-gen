@@ -2,6 +2,7 @@
 import os,  shlex, subprocess
 from jinja2 import Template, Environment, FileSystemLoader
 from pprint import pprint
+from argparse import ArgumentParser
 
 
 def pandoc2html(md_file):
@@ -106,13 +107,25 @@ def generate_html_pages(site_dict):
         output_from_parsed_template = template.render(menu=site_menu, content=html_content, title=md_title)
         html_file=md_file.replace('.md','.html') # TODO: use a method more robust than replace
         html_file_open = open(html_file, 'w')
-        html_file_open.write(output_from_parsed_template)
+        html_file_open.write( (output_from_parsed_template).encode('utf-8'))
         html_file_open.close()
 
 
-            
-path = './pages'
-site_dict = parse_filetree(path)
+# Arguments        
+p = ArgumentParser()
+p.add_argument("--local", action='store_true', help="use local when running the script on local machine")
+args = p.parse_args()
+
+if args.local is True:
+    wd = '.'
+    os.chdir(wd)                
+else:
+    wd = '/home/andre/website-prototype' #working directiory
+    os.chdir(wd)            
+
+    
+content_path = './pages'
+site_dict = parse_filetree(content_path)
 pprint(site_dict)
 generate_html_pages( site_dict )
 
