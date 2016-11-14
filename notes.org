@@ -57,6 +57,7 @@ GIT_WORK_TREE=/home/andre/git_hooks_nonbare git checkout -f
 in ~post-receive~ file
 
 
+
 ** YAML
 - pandoc seems to get the variables and use them in standalone conversion (with templates)
 http://stackoverflow.com/questions/26395374/what-can-i-control-with-yaml-header-options-in-pandoc

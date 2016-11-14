@@ -1,4 +1,4 @@
-#Hello from ./events/foo.md
+#Hello from foo
 
 
 1:1 In the beginning God created the heavens and the earth.

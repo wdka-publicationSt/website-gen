@@ -1,3 +1,5 @@
 # About
 
-About **what**?
+*what is this about?*
+
+![](../../media/troll.png)
