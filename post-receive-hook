@@ -1,0 +1,17 @@
+File Edit Options Buffers Tools Sh-Script Help
+#!/bin/sh
+
+git_work_tree_path=/home/andre/website-prototype
+GIT_WORK_TREE=$git_work_tree_path git checkout -f
+
+# runs script that converts md to website
+python $git_work_tree_path/generate_website.py
+
+# git variables
+commitname=`git log -n 1 --pretty=format:%cn`
+commitdate=`git log -n 1 --pretty=format:%cd`
+
+# echo $commitname >> $git_work_tree_path/commitReceived.txt
+# echo $commitdate >> $git_work_tree_path/commitReceived.txt
+
+
