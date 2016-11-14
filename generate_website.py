@@ -120,7 +120,7 @@ if args.local is True:
     wd = '.'
     os.chdir(wd)                
 else:
-    wd = '/home/andre/website-prototype' #working directiory
+    wd = '/var/www/pubst/prototype' #working directiory
     os.chdir(wd)            
 
     
