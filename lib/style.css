@@ -1,0 +1,18 @@
+
+html {
+    font-family: sans-serif;
+    font-size: 12pt;
+}
+
+h1,h2,h3,h4,h5 { font-family: monospace;}
+
+
+div#menu {
+        display: inline-block;
+        width: 200px;
+        vertical-align: top;
+}
+div#content {
+        display: inline-block;
+        width: 600px;
+}
