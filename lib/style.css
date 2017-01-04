@@ -16,3 +16,11 @@ div#content {
         display: inline-block;
         width: 600px;
 }
+
+/* menu */
+li.menu_sections, li.menu_items {
+        list-style-type: none;
+}
+
+li ul {display:none; } /*see interaction.js for menu interaction */
+

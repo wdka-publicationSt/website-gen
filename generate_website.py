@@ -64,7 +64,7 @@ def generate_menu(menu_dict): # if content or index page
     <ul class="menu_sections">
    {% for item_dir in dirs %} {# loop through dirs_all to create menu sections=li #}
 
-    <li class="menu_sections">{{ item_dir|capitalize }}</li>
+    <li class="menu_sections">{{ item_dir|capitalize }}
 
         <ul class="menu_items">
         {% for key, value in menu_dict.items() %}
@@ -74,16 +74,13 @@ def generate_menu(menu_dict): # if content or index page
             <li class="menu_items">
     {# if index: path=./; if not path=../#}
 
-    <a href="../{{value.file_path|replace('.md','.html')}}">
-    {{value.title|capitalize}}  {# value.date #}
-    </a></li>
+        <a href="../{{value.file_path|replace('.md','.html')}}">{{value.title|capitalize}}  {# value.date #}</a>
 
+       </li>
+    </li>
          {% endif %}
-
       {% endfor %}
       </ul>
-
-
     {% endfor %}
     </ul>''')
 

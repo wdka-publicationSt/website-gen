@@ -64,10 +64,7 @@ In addition to push your commits to Chichi server `git commit chichi master` als
 
 # TO DO
 ## Style
-* list to collapsible menus, such as in <http://jasalguero.com/ledld/development/web/expandable-list/>
-
-## Navigation:
-* include index.html file that redirects to files chosen to be the landing page
+* style menu list
 
 ## Programming
 * clean and organize generate_website.py
